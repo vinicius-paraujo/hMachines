@@ -1,0 +1,10 @@
+name: hMachines
+version: 1.2
+author: "Markineo"
+main: com.markineo.hmachines.Machines
+commands:
+    maquinas:
+    máquinas:
+    combustíveis:
+    combustiveis:
+    madmin:

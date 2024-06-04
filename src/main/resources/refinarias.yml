@@ -1,0 +1,25 @@
+#   _     __  __            _     _                 
+#  | |   |  \/  |          | |   (_)                
+#  | |__ | \  / | __ _  ___| |__  _ _ __   ___  ___ 
+#  | '_ \| |\/| |/ _` |/ __| '_ \| | '_ \ / _ \/ __|  Desenvolvido por: Markineo
+#  | | | | |  | | (_| | (__| | | | | | | |  __/\__ \  Versão: 1.2
+#  |_| |_|_|  |_|\__,_|\___|_| |_|_|_| |_|\___||___/
+#                                                  
+#        
+
+refinarias:
+  1:
+    # ID do item da máquina
+    id: '95:15'
+    description:
+        - "&7refinaria braba"
+        - ""
+        - "&7cololque no chão para ativar."
+    # Configurável pelo comando "/machinesadmin drops"
+    drops: null
+    # Displayname
+    name: "&aRefinaria 1"
+    # Quantos combustíveis ela suporta no máximo
+    limite: 5
+    # Aqui vai o preço para compra.
+    preco: 50.0
