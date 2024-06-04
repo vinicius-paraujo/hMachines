@@ -32,6 +32,7 @@ O plugin possui algumas dependências. Aqui está a lista:
 - "playermessage <mensagem>"
 - "playercmd <comando>"
 - "consolecmd <comando>"
+- "openmenu <id do menu>"
 ```
 
 Exemplo:
