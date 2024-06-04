@@ -23,49 +23,50 @@ public class MaquinasAdminCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!(sender instanceof Player)) {
-            Bukkit.getConsoleSender().sendMessage(FileManager.getMessage("machines_messages.only_player"));
-            return true;
-        }
-
-        Player player = (Player) sender;
-
-        if (!player.hasPermission("hmachines.admin")) {
-            player.sendMessage(FileManager.getMessage("machines_messages.admin_permission"));
+        if (!sender.hasPermission("hmachines.admin")) {
+            sender.sendMessage(FileManager.getMessage("machines_messages.admin_permission"));
             return true;
         }
 
         String sintaxe = FileManager.getMessage("machines_messages.admin_sintaxe");
 
         if (args.length < 1) {
-            player.sendMessage(sintaxe);
+            sender.sendMessage(sintaxe);
             return true;
         }
 
         switch (args[0]) {
-        	case "adicionardrop":
-        		adicionarDrop(player, args);
-        		break;
-        	case "removerdrop":
-        		removerDrop(player, args);
-        		break;
+            case "adicionardrop":
+                if (sender instanceof Player) {
+                    adicionarDrop((Player) sender, args);
+                } else {
+                    sender.sendMessage("Este comando só pode ser executado por jogadores.");
+                }
+                break;
+            case "removerdrop":
+                removerDrop(sender, args);
+                break;
             case "clearhds":
-                clearHDs(player);
+                if (sender instanceof Player) {
+                    clearHDs((Player) sender);
+                } else {
+                    sender.sendMessage("Este comando só pode ser executado por jogadores.");
+                }
                 break;
             case "reload":
-                reloadConfig(player);
+                reloadConfig(sender);
                 break;
             case "add":
-                addItem(player, args);
-                break;            
+                addItem(sender, args);
+                break;
             default:
-                player.sendMessage(FileManager.getMessage("machines_messages.subcommand_not_found"));
+                sender.sendMessage(FileManager.getMessage("machines_messages.subcommand_not_found"));
                 break;
         }
 
         return true;
     }
-    
+
     private void adicionarDrop(Player player, String[] args) {
         if (args.length < 3) {
             player.sendMessage("§7Sintaxe incorreta. Use: §3/madmin adicionardrop <id da máquina> <porcentagem>§7.\n§7Use o comando §3segurando §7o item na sua mão§7.");
@@ -73,10 +74,10 @@ public class MaquinasAdminCommand implements CommandExecutor {
         }
 
         String key = args[1];
-        
+
         FileConfiguration config = FileManager.getMachinesConfig();
         ConfigurationSection section = config.getConfigurationSection("maquinas").getConfigurationSection(key);
-        
+
         if (section == null) {
             player.sendMessage(FileManager.getMessage("machines_messages.invalid_id"));
             return;
@@ -94,14 +95,14 @@ public class MaquinasAdminCommand implements CommandExecutor {
         ItemStack item = player.getItemInHand();
         if (item == null || item.getType().equals(Material.AIR)) {
             player.sendMessage("§7Você precisa segurar um item na mão para adicionar um drop.");
-            
+
             return;
         }
 
         String itemSerialized = serializeItem(item);
 
         int newDropId = 1;
-        
+
         ConfigurationSection dropsSection = section.getConfigurationSection("drops");
         if (dropsSection != null) {
             newDropId = dropsSection.getKeys(false).stream()
@@ -111,36 +112,35 @@ public class MaquinasAdminCommand implements CommandExecutor {
         } else {
             dropsSection = section.createSection("drops");
         }
-        
-        
+
         ConfigurationSection dropsSectionx = dropsSection;
         double totalChance = dropsSectionx.getKeys(false)
-	            .stream()
-	            .mapToDouble(dkey -> dropsSectionx.getConfigurationSection(dkey).getDouble("chance", 0))
-	            .sum();
+            .stream()
+            .mapToDouble(dkey -> dropsSectionx.getConfigurationSection(dkey).getDouble("chance", 0))
+            .sum();
 
-	    if (totalChance + porcentagem > 1) {
-	    	player.sendMessage("§7A soma das porcentagens deve somar exatamente §3100%§7. Com o valor inserido, a soma ultrapassa esse percentual.");
-	    	
-	    	return;
-	    }
+        if (totalChance + porcentagem > 1) {
+            player.sendMessage("§7A soma das porcentagens deve somar exatamente §3100%§7. Com o valor inserido, a soma ultrapassa esse percentual.");
+
+            return;
+        }
 
         ConfigurationSection newDropSection = dropsSection.createSection(String.valueOf(newDropId));
         newDropSection.set("item", itemSerialized);
         newDropSection.set("chance", porcentagem);
 
         try {
-        	FileManager.saveMaquinasConfig(config);
+            FileManager.saveMaquinasConfig(config);
         } catch (IOException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         }
 
         player.sendMessage("§7Drop adicionado com sucesso à máquina '" + key + "' com " + porcentagem * 100 + "% de chance.");
     }
 
-    private void removerDrop(Player player, String[] args) {
+    private void removerDrop(CommandSender sender, String[] args) {
         if (args.length < 3) {
-            player.sendMessage("§7Sintaxe incorreta. Use: §3/madmin removedrop <id da máquina> <key do drop>§7.");
+            sender.sendMessage("§7Sintaxe incorreta. Use: §3/madmin removedrop <id da máquina> <key do drop>§7.");
             return;
         }
 
@@ -151,31 +151,31 @@ public class MaquinasAdminCommand implements CommandExecutor {
         ConfigurationSection section = config.getConfigurationSection("maquinas").getConfigurationSection(machineKey);
 
         if (section == null) {
-            player.sendMessage(FileManager.getMessage("machines_messages.invalid_id"));
+            sender.sendMessage(FileManager.getMessage("machines_messages.invalid_id"));
             return;
         }
 
         ConfigurationSection dropsSection = section.getConfigurationSection("drops");
         if (dropsSection == null || !dropsSection.contains(dropKey)) {
-            player.sendMessage("§7Drop com a key '" + dropKey + "' não encontrado na máquina '" + machineKey + "'.");
+            sender.sendMessage("§7Drop com a key '" + dropKey + "' não encontrado na máquina '" + machineKey + "'.");
             return;
         }
 
         dropsSection.set(dropKey, null);
-        
+
         try {
-        	FileManager.saveMaquinasConfig(config);
+            FileManager.saveMaquinasConfig(config);
         } catch (IOException e) {
-        	e.printStackTrace();
+            e.printStackTrace();
         }
 
-        player.sendMessage("§7Drop com a key '" + dropKey + "' removido da máquina '" + machineKey + "' com sucesso.");
+        sender.sendMessage("§7Drop com a key '" + dropKey + "' removido da máquina '" + machineKey + "' com sucesso.");
     }
 
     private String serializeItem(ItemStack item) {
         YamlConfiguration config = new YamlConfiguration();
         config.set("item", item);
-        
+
         return config.saveToString();
     }
 
@@ -184,38 +184,47 @@ public class MaquinasAdminCommand implements CommandExecutor {
         player.sendMessage(FileManager.getMessage("machines_messages.hds_removed"));
     }
 
-    private void reloadConfig(Player player) {
+    private void reloadConfig(CommandSender sender) {
         FileManager.reloadConfigurations();
-        player.sendMessage(FileManager.getMessage("machines_messages.reload_message"));
+        sender.sendMessage(FileManager.getMessage("machines_messages.reload_message"));
     }
 
-    private void addItem(Player player, String[] args) {
-        if (args.length < 4) {
-            player.sendMessage("§7Uso correto&8: §3/madmin add <máquina/refinaria/fix/combustível> <id> <jogador> <quantidade>");
+    private void addItem(CommandSender sender, String[] args) {
+        if (args.length < 5) {
+            sender.sendMessage("§7Uso correto&8: §3/madmin add <máquina/refinaria/fix/combustível> <id> <jogador> <quantidade>");
             return;
         }
 
         String type = args[1];
         String id = args[2];
         String playerName = args[3];
+        String quantityString = args[4];
 
         if (!id.matches("\\d+")) {
-            player.sendMessage(FileManager.getMessage("machines_messages.invalid_id"));
+            sender.sendMessage(FileManager.getMessage("machines_messages.invalid_id"));
             return;
         }
 
+        if (!quantityString.matches("\\d+")) {
+            sender.sendMessage("§cQuantidade inválida.");
+            return;
+        }
+
+        int quantity = Integer.parseInt(quantityString);
+
         Player targetPlayer = Bukkit.getPlayer(playerName);
         if (targetPlayer == null) {
-            player.sendMessage("§cJogador não encontrado.");
+            sender.sendMessage("§cJogador não encontrado.");
             return;
         }
 
         ItemStack item = getItemByType(type, id);
         if (item != null) {
+            item.setAmount(quantity);
             targetPlayer.getInventory().addItem(item);
-            player.sendMessage(String.format("§7Foi entregue um(a) %s para o jogador %s. (ID #§a%s§7)", type, playerName, id));
+            sender.sendMessage(String.format("§7Foram entregues %d %s(s) para o jogador %s. (ID #§a%s§7)", quantity, type, playerName, id));
         } else {
-            player.sendMessage(FileManager.getMessage("machines_messages.subcommand_not_found"));
+            sender.sendMessage(FileManager.getMessage("machines_messages.subcommand_not_found"));
         }
     }
 
