@@ -1,32 +1,32 @@
 # hMachines [1.2.0]
-Desenvolvido por: Markineo
+Developed by: Markineo
 
-Primeiramente, agradeço pela compra e pela paciência, qualquer eventual problema pode ser relatado no meu discord: @markineo.
+First of all, thank you for your stay here!
 
-## Requerimentos
-O plugin possui algumas dependências. Aqui está a lista:
+## Requirements
+The plugin has some dependencies. Here is the list:
 - `PlaceholderAPI`
 - `Vault`
 - `LuckPerms`
 - `HeadDatabase`
 - `WorldGuard`
 
-## Sobre
-### Combustível
-- Cada combustível é definido no arquivo '`combustiveis.yml`', lá você define as informações dele, é importante ressaltar que o plugin entende que um litro é equivalente a um drop.
-- Existem dois tipos de combustiveis: `bruto` e `refinado`. Para refinar eles, é necessário fazer uso de uma Refinaria.
-- Você pode definir o percentual de chance de cada combustível bruto quebrar uma máquina.
+## About
+### Fuel
+- Each fuel is defined in the '`combustiveis.yml`' file, where you can set its information. It is important to note that the plugin considers one liter equivalent to one drop.
+- There are two types of fuel: crude and refined. To refine them, you need to use a Refinery.
+- You can set the percentage chance of each crude fuel breaking a machine.
 
-### Refinaria
-- A refinaria é adquirida na loja, ela serve basicamente ..para refinar. (risos em programador)
+### Refinery
+- The refinery is purchased from the store and is basically used for refining. `(programmer laughs)`
 
-### Máquinas
-- Os drops das máquinas podem ser definidos basicamente de duas maneiras: `por arquivo` e pelo comando `/madmin adicionardrop <id da máquina> <porcentagem%>`. Para o comando funcionar, você deve estar segurando o item que deseja adicionar.
-- Para remover um drop, você pode usar `/madmin removerdrop <id da máquina> <id do drop>`.
+### Machines
+- Machine drops can be defined in two main ways: by file and by the command `/madmin adddrop <machine id> <percentage%>`. For the command to work, you must be holding the item you want to add.
+- To remove a drop, you can use `/madmin removedrop <machine id> <drop id>`.
 
 ### Menus
-- Os menus possuem funcionalidades interessantes, inicialmente, existem apenas dois: `combustiveis.yml` e `maquinas.yml`. Você pode adicionar mais, porém eles vão precisar de uma ID e um TITLE diferente. Você pode configurar diferente ações para o clique.
-- `left_action` e `right_action` suportam as seguintes funções
+The menus have interesting functionalities; initially, there are only two: combustiveis.yml and maquinas.yml. You can add more, but they will need different IDs and TITLES. You can configure different actions for the clicks.
+- `left_action` and `right_action` support the following functions:
 ```yml
 - "compra <produto:id>" -> Os produtos aceitos são: 'maquina/refinaria/combustivel/fix'
 - "playermessage <mensagem>"
@@ -35,25 +35,25 @@ O plugin possui algumas dependências. Aqui está a lista:
 - "openmenu <id do menu>"
 ```
 
-Exemplo:
+Example:
 ```yml
-itens:
+items:
     1:
         type: "icon"
         id: '397:3'
         skull_owner: '{heads-9356}'
-        name: "&3Cancelar"
-        left_action: "playermessage &7Você cancelou a ação."
+        name: "&3Cancel"
+        left_action: "playermessage &7You canceled the action."
         description:
-        - "&7Clique para cancelar."
+        - "&7Click to cancel."
         pos_x: 0
         pos_y: 0
 ```
 
 ### HeadsDatabase
-- O plugin é compatível com o HeadsDatabase, então você pode adicionar Heads customizadas, basta inserir `{heads-ID}` ao skull_owner.
+- The plugin is compatible with HeadsDatabase, so you can add custom heads by inserting {heads-ID} into skull_owner.
 
-## Permissões
+## Permissions
 - hmachines.admin
 - hmachines.stack
 - hmachines.use
